@@ -10,7 +10,6 @@ httplib.HTTPConnection.debuglevel = 1
 logging.basicConfig()
 logging.getLogger().setLevel(logging.DEBUG)
 
-
 class AnkiCard(object):
     BASIC_ID = 1408344581768
     CLOZE_ID = 1408344581765
@@ -44,6 +43,33 @@ class AnkiCard(object):
     def __repr__(self):
         return "Card type: {0}, question: {1}, answer: {2}, deck: {3}".format(
                 self.card_type, self.question, self.answer, self.deck)
+
+
+def add_cards_to_anki(cards, username, password):
+    """Adds the given cards to the AnkiWeb server"""
+    s = requests.Session()
+    r = s.get("https://ankiweb.net/account/login")
+
+    time.sleep(1)
+
+    login_payload = { 'submitted': 1, 'username': username, 'password': password }
+
+    r = s.post("https://ankiweb.net/account/login", data=login_payload)
+
+    time.sleep(1)
+
+    for card in cards:
+        r = s.get("https://ankiweb.net/edit/")
+
+        time.sleep(1)
+
+        payload = card.format()
+
+        r = s.post("https://ankiweb.net/edit/save", data=payload)
+
+        time.sleep(1)
+
+    r = s.get("https://ankiweb.net/account/logout")
 
 def parse_multiline_string(f, end_block):
     """Parses a multiline-string from file, with
@@ -79,37 +105,9 @@ def parse_card(f):
 
 def main(args):
     with open(args.file, 'r') as f:
-        file_iter = iter(f)
-
         cards = [card for card in parse_card(f)]
 
         add_cards_to_anki(cards, args.username, args.password)
-
-def add_cards_to_anki(cards, username, password):
-    """Adds the given cards to the AnkiWeb server"""
-    s = requests.Session()
-    r = s.get("https://ankiweb.net/account/login")
-
-    time.sleep(1)
-
-    login_payload = { 'submitted': 1, 'username': username, 'password': password }
-
-    r = s.post("https://ankiweb.net/account/login", data=login_payload)
-
-    time.sleep(1)
-
-    for card in cards:
-        r = s.get("https://ankiweb.net/edit/")
-
-        time.sleep(1)
-
-        payload = card.format()
-
-        r = s.post("https://ankiweb.net/edit/save", data=payload)
-
-        time.sleep(1)
-
-    r = s.get("https://ankiweb.net/account/logout")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Parses a file of anki-cards and sends them to AnkiWeb")
