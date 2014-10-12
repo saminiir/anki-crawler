@@ -44,37 +44,30 @@ class AnkiCard(object):
         return "Card type: {0}, question: {1}, answer: {2}, deck: {3}".format(
                 self.card_type, self.question, self.answer, self.deck)
 
+def parse_multiline_string(f, end_block):
+    multiline_string = ""
+    while True:
+        tmp = f.next()
+
+        if end_block in tmp:
+            break
+
+        multiline_string += tmp
+
+    return multiline_string
+
 def parse_card(f):
     for line in f:
         card_type = f.next()
 
-        #question: tag
-        f.next()
+        f.next() #question-tag
 
-        question = ""
-        answer = ""
-
-        deck = ""
-
-        while True:
-            tmp = f.next()
-
-            if "ANSWER:" in tmp:
-                break
-
-            question += tmp
-
-        while True:
-            tmp = f.next()
-
-            if "DECK:" in tmp:
-                break
-
-            answer += tmp
+        question = parse_multiline_string(f, "ANSWER:")
+        answer = parse_multiline_string(f, "DECK:")
 
         deck = f.next()
 
-        f.next()
+        f.next() #skip empty line after card
 
         yield AnkiCard(card_type.strip(), question.strip().replace('\n', "<br/>"),
                        answer.strip().replace('\n', "<br/>"), deck.strip()) 
