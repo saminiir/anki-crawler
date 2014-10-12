@@ -22,6 +22,7 @@ class AnkiCard(object):
         self.deck = deck
 
     def format(self):
+        """Format card to POST payload required by AnkiWeb"""
         print self.deck
         if self.card_type == "basic":
             return {
@@ -45,6 +46,9 @@ class AnkiCard(object):
                 self.card_type, self.question, self.answer, self.deck)
 
 def parse_multiline_string(f, end_block):
+    """Parses a multiline-string from file, with
+    a terminator end block.
+    """
     multiline_string = ""
     while True:
         tmp = f.next()
@@ -57,6 +61,7 @@ def parse_multiline_string(f, end_block):
     return multiline_string
 
 def parse_card(f):
+    """Parses an anki-card from file"""
     for line in f:
         card_type = f.next()
 
@@ -81,6 +86,7 @@ def main(args):
         add_cards_to_anki(cards, args.username, args.password)
 
 def add_cards_to_anki(cards, username, password):
+    """Adds the given cards to the AnkiWeb server"""
     s = requests.Session()
     r = s.get("https://ankiweb.net/account/login")
 
@@ -98,8 +104,6 @@ def add_cards_to_anki(cards, username, password):
         time.sleep(1)
 
         payload = card.format()
-
-        print payload
 
         r = s.post("https://ankiweb.net/edit/save", data=payload)
 
