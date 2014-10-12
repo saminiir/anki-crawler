@@ -1,0 +1,22 @@
+TYPE:
+basic
+QUESTION:
+An example basic question.
+
+Multilines should be supported.
+ANSWER:
+Answer to the example question.
+DECK:
+testdeck
+----------------------
+TYPE:
+cloze
+QUESTION:
+A cloze question, which can be multiline also:
+{{c1::clozee}}
+
+Like this.
+ANSWER:
+DECK:
+testdeck
+----------------------
