@@ -22,18 +22,24 @@ class AnkiCard(object):
 
     def format(self):
         """Format card to POST payload required by AnkiWeb"""
-        print self.deck
-        if self.card_type == "basic":
+
+        # AnkiWeb needs some custom formatting
+        card_type = self.card_type.strip()
+        question = self.question.strip().replace('\n', "<br/>").replace('"', '\\"')
+        answer = self.answer.strip().replace('\n', "<br/>").replace('"', '\\"')
+        deck = self.deck.strip()
+
+        if card_type == "basic":
             return {
-                'data': "[[\"{0}\",\"{1}\"],\"\"]".format(self.question, self.answer),
+                'data': "[[\"{0}\",\"{1}\"],\"\"]".format(question, answer),
                 'mid': AnkiCard.BASIC_ID,
-                'deck': self.deck
+                'deck': deck
             }
         else:
             return {
-                'data': "[[\"{0}\",\"\"],\"\"]".format(self.question),
+                'data': "[[\"{0}\",\"\"],\"\"]".format(question),
                 'mid': AnkiCard.CLOZE_ID,
-                'deck': self.deck
+                'deck': deck
             }
 
     def __str__(self):
@@ -100,8 +106,7 @@ def parse_card(f):
 
         f.next() #skip empty line after card
 
-        yield AnkiCard(card_type.strip(), question.strip().replace('\n', "<br/>"),
-                       answer.strip().replace('\n', "<br/>"), deck.strip()) 
+        yield AnkiCard(card_type, question, answer, deck) 
 
 def main(args):
     with open(args.file, 'r') as f:
