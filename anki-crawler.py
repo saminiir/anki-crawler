@@ -12,6 +12,7 @@ logging.getLogger().setLevel(logging.DEBUG)
 
 class AnkiCard(object):
     BASIC_ID = 1408344581768
+    BASIC_REVERSE_ID = 1408344581767
     CLOZE_ID = 1408344581765
 
     def __init__(self, card_type, question, answer, deck):
@@ -35,12 +36,20 @@ class AnkiCard(object):
                 'mid': AnkiCard.BASIC_ID,
                 'deck': deck
             }
-        else:
+        elif card_type == "cloze":
             return {
                 'data': "[[\"{0}\",\"\"],\"\"]".format(question),
                 'mid': AnkiCard.CLOZE_ID,
                 'deck': deck
             }
+        elif card_type == "basic-reverse":
+            return {
+                'data': "[[\"{0}\",\"{1}\"],\"\"]".format(question, answer),
+                'mid': AnkiCard.BASIC_REVERSE_ID,
+                'deck': deck
+            }
+        else:
+            raise Exception("No card type {1} found!".format(card_type))
 
     def __str__(self):
         return "Card type: {0}, question: {1}, answer: {2}, deck: {3}".format(
