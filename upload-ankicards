@@ -1,0 +1,56 @@
+#!/bin/bash
+
+set -e
+set -u
+set -o pipefail
+
+function usage {
+    echo "Usage: $0 filename username password readysuffix ankicrawler-path"
+    echo
+    printf "filename            filename to read anki cards from\n"
+    printf "username            username to use to login to AnkiWeb\n"
+    printf "password            password for AnkiWeb\n"
+    printf "readysuffix         the suffix string to append to the archived file\n"
+    printf "ankicrawler-path    path to ankicrawler\n"
+    
+    exit 1
+}
+
+while getopts "h" opt; do
+    case $opt in
+        h)
+            usage
+            break;;
+    esac
+done
+
+[ "$#" -ne 5 ] && usage
+
+filename=$1
+username=$2
+password=$3
+readysuffix=$4
+ankicrawler_path=$5
+datetime=$(date +%Y-%m-%d)
+ankifolder=$(dirname $filename)
+iteration=1
+
+if [ ! -f "$filename" ]; then
+   echo "File does not exist"
+   exit 0
+fi
+
+resulting_path="$ankifolder/$datetime-$readysuffix-$iteration"
+
+while [ -f "$resulting_path" ]; do
+    iteration=$(( $iteration + 1 ))
+    resulting_path="$ankifolder/$datetime-$readysuffix-$iteration"
+done
+
+cd "$ankicrawler_path"
+
+PS1=lol
+source venv/bin/activate
+
+mv "$filename" "$resulting_path"
+python anki-crawler.py -f "$resulting_path" -u "$username" -p "$password" 
