@@ -52,5 +52,5 @@ cd "$ankicrawler_path"
 PS1=lol
 source venv/bin/activate
 
+python anki-crawler.py -f "$filename" -u "$username" -p "$password" 
 mv "$filename" "$resulting_path"
-python anki-crawler.py -f "$resulting_path" -u "$username" -p "$password" 
