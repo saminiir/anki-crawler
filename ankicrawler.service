@@ -1,0 +1,6 @@
+[Unit]
+Description=Runs anki-crawler
+
+[Service]
+Type=oneshot
+ExecStart=/home/saminiir/bin/upload-ankicards /home/saminiir/Dropbox/anki_cards/2016-01-xx-work-randomz $email $password randomz-uploaded /home/saminiir/code/python/anki-crawler

@@ -1,0 +1,8 @@
+[Unit]
+Description=Run ankicrawler.service every 3 hours
+
+[Timer]
+OnActiveSec=3hours
+
+[Install]
+WantedBy=timers.target
